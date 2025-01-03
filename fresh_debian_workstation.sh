@@ -7,8 +7,19 @@ check_root() {
     fi
 }
 
+# Releases available at https://github.com/charmbracelet/gum/releases
+install_gum() {
+    echo "Attempting to install gum... This makes things look pretty :D..."
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+    sudo apt update && sudo apt install gum
+}
 
-
+make_directories() {
+    mkdir -p ~/.config/helix
+    mkdir -p ~/.config/zellij
+}
 
 main_loop() {
     # Update the package list
@@ -42,6 +53,6 @@ main_loop() {
 
 
 check_root
-
+make_directories
 
 main_loop

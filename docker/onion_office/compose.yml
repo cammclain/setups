@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=onionoffice
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DB=onionoffice
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onionoffice"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  sourcehut:
+    image: sourcehut:latest
+    build:
+      context: ./sourcehut
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://onionoffice:changeme@postgres:5432/onionoffice
+    restart: always
+
+  mox:
+    image: r.xmox.nl/mox:latest
+    environment:
+      - MOX_DOCKER=yes
+    network_mode: 'host'
+    volumes:
+      - ./config:/mox/config
+      - ./data:/mox/data
+      - ./web:/mox/web
+    working_dir: /mox
+    restart: on-failure
+    healthcheck:
+      test: netstat -nlt | grep ':25 '
+      interval: 1s
+      timeout: 1s
+      retries: 10
+
+volumes:
+  postgres_data:

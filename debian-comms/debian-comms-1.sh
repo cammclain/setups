@@ -21,7 +21,12 @@ make_directories() {
     mkdir -p ~/.config/zellij
 }
 
-main_loop() {
+install_kvm_virtualization_tools() {
+    sudo apt install qemu-system-arm qemu-user-static -y
+}
+
+
+initial_setup_loop() {
     # Update the package list
     sudo apt update
 
@@ -55,4 +60,4 @@ main_loop() {
 check_root
 make_directories
 
-main_loop
+initial_setup_loop

@@ -64,6 +64,43 @@ install_container_tools() {
     fi
 }
 
+
+set_group_permissions() {
+    gum style --border normal --margin "1" --padding "1 2" --border-foreground 212 "Setting group permissions..."
+    
+    # Add user to Docker group
+    if ! sudo usermod -aG docker $USER; then
+        gum style --border double --border-foreground 196 "Failed to add user to Docker group"
+        gum style --foreground 99 "Try running: sudo usermod -aG docker $USER"
+        exit 1
+    fi
+
+    # Add user to Podman group
+    if ! sudo usermod -aG podman $USER; then
+        gum style --border double --border-foreground 196 "Failed to add user to Podman group"
+        gum style --foreground 99 "Try running: sudo usermod -aG podman $USER"
+        exit 1
+    fi
+
+    # Add user to KVM group
+    if ! sudo usermod -aG kvm $USER; then
+        gum style --border double --border-foreground 196 "Failed to add user to KVM group"
+        gum style --foreground 99 "Try running: sudo usermod -aG kvm $USER"
+        exit 1
+    fi
+
+    # Add user to Libvirt group
+    if ! sudo usermod -aG libvirt $USER; then
+        gum style --border double --border-foreground 196 "Failed to add user to Libvirt group"
+        gum style --foreground 99 "Try running: sudo usermod -aG libvirt $USER"
+        exit 1
+    fi
+
+    gum style --foreground 99 "Note: You'll need to log out and back in for the new group permissions to take effect"
+}
+
+
+
 initial_setup_loop() {
     gum style --border double --margin "1" --padding "1 2" --border-foreground 212 "Starting initial system setup..."
 
